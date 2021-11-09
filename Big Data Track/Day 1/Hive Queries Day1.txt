@@ -1,0 +1,775 @@
+ak@ak:~$ jps
+1973 Jps
+ak@ak:~$ start-all.sh
+This script is Deprecated. Instead use start-dfs.sh and start-yarn.sh
+Starting namenodes on [localhost]
+localhost: starting namenode, logging to /home/ak/hadoop-2.10.1/logs/hadoop-ak-namenode-ak.out
+localhost: starting datanode, logging to /home/ak/hadoop-2.10.1/logs/hadoop-ak-datanode-ak.out
+$$Starting secondary namenodes [0.0.0.0]
+$$0.0.0.0: starting secondarynamenode, logging to /home/ak/hadoop-2.10.1/logs/hadoop-ak-secondarynamenode-ak.out
+$$$$starting yarn daemons
+starting resourcemanager, logging to /home/ak/hadoop-2.10.1/logs/yarn-ak-resourcemanager-ak.out
+localhost: starting nodemanager, logging to /home/ak/hadoop-2.10.1/logs/yarn-ak-nodemanager-ak.out
+ak@ak:~$ jps
+2808 NodeManager
+2537 SecondaryNameNode
+2331 DataNode
+2158 NameNode
+3119 Jps
+2671 ResourceManager
+ak@ak:~$ pwd
+/home/ak
+ak@ak:~$ hdfs dfs -mkdir /a/b/c
+mkdir: `/a/b/c': No such file or directory
+ak@ak:~$ hdfs dfs -mkdir /a
+ak@ak:~$ mkdir /home/ak/a/b/c
+mkdir: cannot create directory ‘/home/ak/a/b/c’: No such file or directory
+ak@ak:~$ mkdir -r /home/ak/a/b/c
+mkdir: invalid option -- 'r'
+Try 'mkdir --help' for more information.
+ak@ak:~$ mkdir -R /home/ak/a/b/c
+mkdir: invalid option -- 'R'
+Try 'mkdir --help' for more information.
+ak@ak:~$ mkdir -R /a/b/c
+mkdir: invalid option -- 'R'
+Try 'mkdir --help' for more information.
+ak@ak:~$ mkdir  /a/b/c
+mkdir: cannot create directory ‘/a/b/c’: No such file or directory
+ak@ak:~$ mkdir /a
+mkdir: cannot create directory ‘/a’: Permission denied
+ak@ak:~$ hdfs dfs -mkdir -p /a/b/c
+ak@ak:~$ mkdir -p -f /a/b
+mkdir: invalid option -- 'f'
+Try 'mkdir --help' for more information.
+ak@ak:~$ mkdir -p f /a/b
+mkdir: cannot create directory ‘/a’: Permission denied
+ak@ak:~$ hive
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/home/ak/apache-hive-3.1.2-bin/lib/log4j-slf4j-impl-2.10.0.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/home/ak/hadoop-2.10.1/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]
+Hive Session ID = 4bb2e5cb-80d0-454b-bae0-80f5dfe5c34c
+
+Logging initialized using configuration in jar:file:/home/ak/apache-hive-3.1.2-bin/lib/hive-common-3.1.2.jar!/hive-log4j2.properties Async: true
+Hive Session ID = ee36ddba-ccf6-484c-b5c3-d60ff1fa3fd9
+Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+hive> show databases;
+OK
+ak
+default
+Time taken: 0.455 seconds, Fetched: 2 row(s)
+hive> create database ofsa;
+OK
+Time taken: 0.165 seconds
+hive> show databases;
+OK
+ak
+default
+ofsa
+Time taken: 0.027 seconds, Fetched: 3 row(s)
+hive> use ofsa;
+OK
+Time taken: 0.042 seconds
+hive> create table student (regno int, name string, cgpa int);
+OK
+Time taken: 0.45 seconds
+hive> insert into student values(191,"Narayan",9);
+Query ID = ak_20211108170618_ef0640ad-af1a-43ac-941f-916455b79eca
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1636366536993_0001, Tracking URL = http://ak:8088/proxy/application_1636366536993_0001/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1636366536993_0001
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2021-11-08 17:06:28,632 Stage-1 map = 0%,  reduce = 0%
+2021-11-08 17:06:33,833 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.84 sec
+2021-11-08 17:06:39,000 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.01 sec
+MapReduce Total cumulative CPU time: 3 seconds 10 msec
+Ended Job = job_1636366536993_0001
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to directory hdfs://localhost:9000/user/hive/warehouse/ofsa.db/student/.hive-staging_hive_2021-11-08_17-06-18_557_7874636489194591138-1/-ext-10000
+Loading data to table ofsa.student
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 3.01 sec   HDFS Read: 16465 HDFS Write: 279 SUCCESS
+Total MapReduce CPU Time Spent: 3 seconds 10 msec
+OK
+Time taken: 22.143 seconds
+hive> insert into student values(110,'Deepak,10);
+FAILED: ParseException line 1:43 character '<EOF>' not supported here
+hive> insert into student values(110,'Deepak',10);
+Query ID = ak_20211108170726_2fd7ef81-882e-48fd-ac9b-9f5f2bdad546
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1636366536993_0002, Tracking URL = http://ak:8088/proxy/application_1636366536993_0002/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1636366536993_0002
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2021-11-08 17:07:32,414 Stage-1 map = 0%,  reduce = 0%
+2021-11-08 17:07:37,519 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.7 sec
+2021-11-08 17:07:42,669 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 2.77 sec
+MapReduce Total cumulative CPU time: 2 seconds 770 msec
+Ended Job = job_1636366536993_0002
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to directory hdfs://localhost:9000/user/hive/warehouse/ofsa.db/student/.hive-staging_hive_2021-11-08_17-07-26_608_334282370296499295-1/-ext-10000
+Loading data to table ofsa.student
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 2.77 sec   HDFS Read: 16480 HDFS Write: 281 SUCCESS
+Total MapReduce CPU Time Spent: 2 seconds 770 msec
+OK
+Time taken: 17.567 seconds
+hive> select * from student;
+OK
+191	Narayan	9
+110	Deepak	10
+Time taken: 0.184 seconds, Fetched: 2 row(s)
+hive> desc student;
+OK
+regno               	int                 	                    
+name                	string              	                    
+cgpa                	int                 	                    
+Time taken: 0.072 seconds, Fetched: 3 row(s)
+hive> desc extended student;
+OK
+regno               	int                 	                    
+name                	string              	                    
+cgpa                	int                 	                    
+	 	 
+Detailed Table Information	Table(tableName:student, dbName:ofsa, owner:ak, createTime:1636371331, lastAccessTime:0, retention:0, sd:StorageDescriptor(cols:[FieldSchema(name:regno, type:int, comment:null), FieldSchema(name:name, type:string, comment:null), FieldSchema(name:cgpa, type:int, comment:null)], location:hdfs://localhost:9000/user/hive/warehouse/ofsa.db/student, inputFormat:org.apache.hadoop.mapred.TextInputFormat, outputFormat:org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat, compressed:false, numBuckets:-1, serdeInfo:SerDeInfo(name:null, serializationLib:org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, parameters:{serialization.format=1}), bucketCols:[], sortCols:[], parameters:{}, skewedInfo:SkewedInfo(skewedColNames:[], skewedColValues:[], skewedColValueLocationMaps:{}), storedAsSubDirectories:false), partitionKeys:[], parameters:{totalSize=28, numRows=2, rawDataSize=26, COLUMN_STATS_ACCURATE={\"BASIC_STATS\":\"true\",\"COLUMN_STATS\":{\"cgpa\":\"true\",\"name\":\"true\",\"regno\":\"true\"}}, numFiles=2, transient_lastDdlTime=1636371464, bucketing_version=2}, viewOriginalText:null, viewExpandedText:null, tableType:MANAGED_TABLE, rewriteEnabled:false, catName:hive, ownerType:USER)	
+Time taken: 0.08 seconds, Fetched: 5 row(s)
+hive> create table patient(pid INT,pname STRING, drug STRING,gender STRING, tot_amt INT) row format delimited fields terminated by ',' stored as textfile;
+OK
+Time taken: 0.122 seconds
+hive> load data local inpath '/home/ak/datasets/patient.txt' into table patient;
+Loading data to table ofsa.patient
+OK
+Time taken: 0.302 seconds
+hive> select * from patient;
+OK
+111	aaa	Para	m	900
+111	aaa	metacin	m	800
+222	bbb	Crocin	f	600
+222	bbb	Para	f	999
+333	ccc	calpol	f	500
+444	ddd	hcq	m	500
+111	aaa	hcq	m	600
+555	eee	cetzine	m	700
+333	ccc	Para	m	444
+111	aaa	Para	m	500
+111	aaa	metacin	m	800
+222	bbb	Crocin	f	600
+222	bbb	Para	f	999
+333	ccc	calpol	f	500
+444	ddd	hcq	m	500
+111	aaa	hcq	m	600
+555	eee	cetzine	m	700
+333	ccc	Para	m	444
+111	aaa	Para	m	500
+111	aaa	metacin	m	800
+222	bbb	Crocin	f	600
+222	bbb	Para	f	999
+333	ccc	calpol	f	500
+444	ddd	hcq	m	500
+111	aaa	hcq	m	600
+555	eee	cetzine	m	700
+333	ccc	Para	m	444
+Time taken: 0.158 seconds, Fetched: 27 row(s)
+hive> create table employee(name STRING, age INT);
+OK
+Time taken: 0.141 seconds
+hive> drop table employee;
+OK
+Time taken: 0.375 seconds
+hive> create table patient(pid INT,pname STRING, drug STRING,gender STRING, tot_amt INT) row format delimited fields terminated by ',' stored as textfile;
+FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTask. AlreadyExistsException(message:Table hive.ofsa.patient already exists)
+hive> create table employee(name string,age int) row format delimited fields terminated by ',' stored as textfile;
+OK
+Time taken: 0.102 seconds
+hive> load data inpath '/narayan/people.txt' into table employee;
+Loading data to table ofsa.employee
+OK
+Time taken: 0.332 seconds
+hive> select * from employee;
+OK
+Michael	NULL
+Andy	NULL
+Justin	NULL
+Time taken: 0.222 seconds, Fetched: 3 row(s)
+hive> drop table employee;
+OK
+Time taken: 0.138 seconds
+hive> create table employee(name string,age int) row format delimited fields terminated by ', ' stored as textfile;
+OK
+Time taken: 0.116 seconds
+hive> load data inpath '/narayan/people.txt' into table employee;
+FAILED: SemanticException Line 1:17 Invalid path ''/narayan/people.txt'': No files matching path hdfs://localhost:9000/narayan/people.txt
+hive> drop table employee;
+OK
+Time taken: 0.153 seconds
+hive> create table employee(name string,age int) row format delimited fields terminated by ', ' stored as textfile;
+OK
+Time taken: 0.125 seconds
+hive> load data inpath '/narayan/people.txt' into table employee;
+FAILED: SemanticException Line 1:17 Invalid path ''/narayan/people.txt'': No files matching path hdfs://localhost:9000/narayan/people.txt
+hive> drop table employee;
+OK
+Time taken: 0.145 seconds
+hive> create table employee(name STRING,age INT) row format delimited fields terminated by ',' stored as textfile;
+OK
+Time taken: 0.113 seconds
+hive> load data inpath '/narayan/people.txt' into table employee;
+FAILED: SemanticException Line 1:17 Invalid path ''/narayan/people.txt'': No files matching path hdfs://localhost:9000/narayan/people.txt
+hive> drop table employee;
+OK
+Time taken: 0.151 seconds
+hive> create table employee(name string,age int) row format delimited fields terminated by ', ' stored as textfile;
+OK
+Time taken: 0.097 seconds
+hive> load data inpath '/narayan/people.txt' into table employee;
+Loading data to table ofsa.employee
+OK
+Time taken: 0.249 seconds
+hive> select * from employee;
+OK
+Michael	NULL
+Andy	NULL
+Justin	NULL
+Time taken: 0.225 seconds, Fetched: 3 row(s)
+hive> drop table employee;
+OK
+Time taken: 0.174 seconds
+hive> create table employee(name string, age string) row format delimited fields terminated by ',' stored as textfile;
+OK
+Time taken: 0.113 seconds
+hive> load data inpath '/narayan/people.txt' into table employee;
+FAILED: SemanticException Line 1:17 Invalid path ''/narayan/people.txt'': No files matching path hdfs://localhost:9000/narayan/people.txt
+hive> load data inpath '/narayan/people.txt' into table employee;
+Loading data to table ofsa.employee
+OK
+Time taken: 0.266 seconds
+hive> select * from employee;
+OK
+Michael	 29
+Andy	 30
+Justin	 19
+Time taken: 0.147 seconds, Fetched: 3 row(s)
+hive> create table drug(name string, dose string) row format delimited fields terminated by ',' stored as textfile;
+OK
+Time taken: 0.124 seconds
+hive> load data inpath '/narayan/drug.txt' into table drug;
+Loading data to table ofsa.drug
+OK
+Time taken: 0.247 seconds
+hive> select * from drug;
+OK
+Para	m9
+metacin	m8
+Crocin	f6
+Para	f9
+calpol	f5
+hcq	m5
+hcq	m6
+cetzine	m7
+Para	m4
+Para	m5
+	NULL
+Time taken: 0.195 seconds, Fetched: 11 row(s)
+hive> select * from patients;
+FAILED: SemanticException [Error 10001]: Line 1:14 Table not found 'patients'
+hive> select * from patient;
+OK
+111	aaa	Para	m	900
+111	aaa	metacin	m	800
+222	bbb	Crocin	f	600
+222	bbb	Para	f	999
+333	ccc	calpol	f	500
+444	ddd	hcq	m	500
+111	aaa	hcq	m	600
+555	eee	cetzine	m	700
+333	ccc	Para	m	444
+111	aaa	Para	m	500
+111	aaa	metacin	m	800
+222	bbb	Crocin	f	600
+222	bbb	Para	f	999
+333	ccc	calpol	f	500
+444	ddd	hcq	m	500
+111	aaa	hcq	m	600
+555	eee	cetzine	m	700
+333	ccc	Para	m	444
+111	aaa	Para	m	500
+111	aaa	metacin	m	800
+222	bbb	Crocin	f	600
+222	bbb	Para	f	999
+333	ccc	calpol	f	500
+444	ddd	hcq	m	500
+111	aaa	hcq	m	600
+555	eee	cetzine	m	700
+333	ccc	Para	m	444
+Time taken: 0.162 seconds, Fetched: 27 row(s)
+hive> select count(*) from patient;
+Query ID = ak_20211108220209_13ca185f-d222-4635-88b7-a1ed7bd33999
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1636366536993_0003, Tracking URL = http://ak:8088/proxy/application_1636366536993_0003/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1636366536993_0003
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2021-11-08 22:02:17,747 Stage-1 map = 0%,  reduce = 0%
+2021-11-08 22:02:26,075 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.5 sec
+2021-11-08 22:02:32,234 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 2.93 sec
+MapReduce Total cumulative CPU time: 2 seconds 930 msec
+Ended Job = job_1636366536993_0003
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 2.93 sec   HDFS Read: 13153 HDFS Write: 102 SUCCESS
+Total MapReduce CPU Time Spent: 2 seconds 930 msec
+OK
+27
+Time taken: 23.56 seconds, Fetched: 1 row(s)
+hive> select * from patient where drug='Para'
+    > ;
+OK
+111	aaa	Para	m	900
+222	bbb	Para	f	999
+333	ccc	Para	m	444
+111	aaa	Para	m	500
+222	bbb	Para	f	999
+333	ccc	Para	m	444
+111	aaa	Para	m	500
+222	bbb	Para	f	999
+333	ccc	Para	m	444
+Time taken: 0.334 seconds, Fetched: 9 row(s)
+hive> select sum(amt) from patient;
+FAILED: SemanticException [Error 10004]: Line 1:11 Invalid table alias or column reference 'amt': (possible column names are: pid, pname, drug, gender, tot_amt)
+hive> select sum(tot_amt) from patient;
+Query ID = ak_20211108220333_4f869ae5-fe09-4211-941b-fae90269f5d0
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1636366536993_0004, Tracking URL = http://ak:8088/proxy/application_1636366536993_0004/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1636366536993_0004
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2021-11-08 22:03:39,129 Stage-1 map = 0%,  reduce = 0%
+2021-11-08 22:03:44,321 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.46 sec
+2021-11-08 22:03:50,484 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 2.88 sec
+MapReduce Total cumulative CPU time: 2 seconds 880 msec
+Ended Job = job_1636366536993_0004
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 2.88 sec   HDFS Read: 13390 HDFS Write: 105 SUCCESS
+Total MapReduce CPU Time Spent: 2 seconds 880 msec
+OK
+17329
+Time taken: 18.579 seconds, Fetched: 1 row(s)
+hive> select drug,sum(amt) from patient group by drug;
+FAILED: SemanticException [Error 10004]: Line 1:16 Invalid table alias or column reference 'amt': (possible column names are: pid, pname, drug, gender, tot_amt)
+hive> select drug,sum(tot_amt) from patient group by drug;
+Query ID = ak_20211108220705_659cb9d3-bcf1-4186-920d-3b60080cfa38
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1636366536993_0005, Tracking URL = http://ak:8088/proxy/application_1636366536993_0005/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1636366536993_0005
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2021-11-08 22:07:11,395 Stage-1 map = 0%,  reduce = 0%
+2021-11-08 22:07:17,610 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.64 sec
+2021-11-08 22:07:22,775 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.15 sec
+MapReduce Total cumulative CPU time: 3 seconds 150 msec
+Ended Job = job_1636366536993_0005
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 3.15 sec   HDFS Read: 13868 HDFS Write: 228 SUCCESS
+Total MapReduce CPU Time Spent: 3 seconds 150 msec
+OK
+Crocin	1800
+Para	6229
+calpol	1500
+cetzine	2100
+hcq	3300
+metacin	2400
+Time taken: 19.083 seconds, Fetched: 6 row(s)
+hive> insert overwrite local directory '/home/ak/results' select * from patient;
+Query ID = ak_20211108220807_a080772d-6354-484b-a515-2694872a08ed
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1636366536993_0006, Tracking URL = http://ak:8088/proxy/application_1636366536993_0006/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1636366536993_0006
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2021-11-08 22:08:13,663 Stage-1 map = 0%,  reduce = 0%
+2021-11-08 22:08:18,808 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.4 sec
+MapReduce Total cumulative CPU time: 1 seconds 400 msec
+Ended Job = job_1636366536993_0006
+Moving data to local directory /home/ak/results
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1   Cumulative CPU: 1.4 sec   HDFS Read: 5631 HDFS Write: 537 SUCCESS
+Total MapReduce CPU Time Spent: 1 seconds 400 msec
+OK
+Time taken: 12.419 seconds
+hive> desc patient;
+OK
+pid                 	int                 	                    
+pname               	string              	                    
+drug                	string              	                    
+gender              	string              	                    
+tot_amt             	int                 	                    
+Time taken: 0.083 seconds, Fetched: 5 row(s)
+hive> desc extended patient;
+OK
+pid                 	int                 	                    
+pname               	string              	                    
+drug                	string              	                    
+gender              	string              	                    
+tot_amt             	int                 	                    
+	 	 
+Detailed Table Information	Table(tableName:patient, dbName:ofsa, owner:ak, createTime:1636373006, lastAccessTime:0, retention:0, sd:StorageDescriptor(cols:[FieldSchema(name:pid, type:int, comment:null), FieldSchema(name:pname, type:string, comment:null), FieldSchema(name:drug, type:string, comment:null), FieldSchema(name:gender, type:string, comment:null), FieldSchema(name:tot_amt, type:int, comment:null)], location:hdfs://localhost:9000/user/hive/warehouse/ofsa.db/patient, inputFormat:org.apache.hadoop.mapred.TextInputFormat, outputFormat:org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat, compressed:false, numBuckets:-1, serdeInfo:SerDeInfo(name:null, serializationLib:org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, parameters:{serialization.format=,, field.delim=,}), bucketCols:[], sortCols:[], parameters:{}, skewedInfo:SkewedInfo(skewedColNames:[], skewedColValues:[], skewedColValueLocationMaps:{}), storedAsSubDirectories:false), partitionKeys:[], parameters:{totalSize=537, numRows=0, rawDataSize=0, numFiles=1, transient_lastDdlTime=1636373109, bucketing_version=2}, viewOriginalText:null, viewExpandedText:null, tableType:MANAGED_TABLE, rewriteEnabled:false, catName:hive, ownerType:USER)	
+Time taken: 0.103 seconds, Fetched: 7 row(s)
+hive> select patient.* from patient join drug on patient.drug=drug.name;
+Query ID = ak_20211108221150_6162c8ae-8086-4f6a-9a2c-d64667ce852f
+Total jobs = 1
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1636366536993_0007, Tracking URL = http://ak:8088/proxy/application_1636366536993_0007/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1636366536993_0007
+Hadoop job information for Stage-3: number of mappers: 1; number of reducers: 0
+2021-11-08 22:12:05,892 Stage-3 map = 0%,  reduce = 0%
+2021-11-08 22:12:11,025 Stage-3 map = 100%,  reduce = 0%, Cumulative CPU 1.94 sec
+MapReduce Total cumulative CPU time: 1 seconds 940 msec
+Ended Job = job_1636366536993_0007
+MapReduce Jobs Launched: 
+Stage-Stage-3: Map: 1   Cumulative CPU: 1.94 sec   HDFS Read: 9887 HDFS Write: 1965 SUCCESS
+Total MapReduce CPU Time Spent: 1 seconds 940 msec
+OK
+111	aaa	Para	m	900
+111	aaa	Para	m	900
+111	aaa	Para	m	900
+111	aaa	Para	m	900
+111	aaa	metacin	m	800
+222	bbb	Crocin	f	600
+222	bbb	Para	f	999
+222	bbb	Para	f	999
+222	bbb	Para	f	999
+222	bbb	Para	f	999
+333	ccc	calpol	f	500
+444	ddd	hcq	m	500
+444	ddd	hcq	m	500
+111	aaa	hcq	m	600
+111	aaa	hcq	m	600
+555	eee	cetzine	m	700
+333	ccc	Para	m	444
+333	ccc	Para	m	444
+333	ccc	Para	m	444
+333	ccc	Para	m	444
+111	aaa	Para	m	500
+111	aaa	Para	m	500
+111	aaa	Para	m	500
+111	aaa	Para	m	500
+111	aaa	metacin	m	800
+222	bbb	Crocin	f	600
+222	bbb	Para	f	999
+222	bbb	Para	f	999
+222	bbb	Para	f	999
+222	bbb	Para	f	999
+333	ccc	calpol	f	500
+444	ddd	hcq	m	500
+444	ddd	hcq	m	500
+111	aaa	hcq	m	600
+111	aaa	hcq	m	600
+555	eee	cetzine	m	700
+333	ccc	Para	m	444
+333	ccc	Para	m	444
+333	ccc	Para	m	444
+333	ccc	Para	m	444
+111	aaa	Para	m	500
+111	aaa	Para	m	500
+111	aaa	Para	m	500
+111	aaa	Para	m	500
+111	aaa	metacin	m	800
+222	bbb	Crocin	f	600
+222	bbb	Para	f	999
+222	bbb	Para	f	999
+222	bbb	Para	f	999
+222	bbb	Para	f	999
+333	ccc	calpol	f	500
+444	ddd	hcq	m	500
+444	ddd	hcq	m	500
+111	aaa	hcq	m	600
+111	aaa	hcq	m	600
+555	eee	cetzine	m	700
+333	ccc	Para	m	444
+333	ccc	Para	m	444
+333	ccc	Para	m	444
+333	ccc	Para	m	444
+Time taken: 22.957 seconds, Fetched: 60 row(s)
+hive> select * from patient join drug on patient.drug=drug.name;
+Query ID = ak_20211108221236_9c005f33-3e31-47c3-97a8-217dcf2152e0
+Total jobs = 1
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1636366536993_0008, Tracking URL = http://ak:8088/proxy/application_1636366536993_0008/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1636366536993_0008
+Hadoop job information for Stage-3: number of mappers: 1; number of reducers: 0
+2021-11-08 22:12:51,084 Stage-3 map = 0%,  reduce = 0%
+2021-11-08 22:12:56,219 Stage-3 map = 100%,  reduce = 0%, Cumulative CPU 1.94 sec
+MapReduce Total cumulative CPU time: 1 seconds 940 msec
+Ended Job = job_1636366536993_0008
+MapReduce Jobs Launched: 
+Stage-Stage-3: Map: 1   Cumulative CPU: 1.94 sec   HDFS Read: 10072 HDFS Write: 2483 SUCCESS
+Total MapReduce CPU Time Spent: 1 seconds 940 msec
+OK
+111	aaa	Para	m	900	Para	m9
+111	aaa	Para	m	900	Para	f9
+111	aaa	Para	m	900	Para	m4
+111	aaa	Para	m	900	Para	m5
+111	aaa	metacin	m	800	metacin	m8
+222	bbb	Crocin	f	600	Crocin	f6
+222	bbb	Para	f	999	Para	m9
+222	bbb	Para	f	999	Para	f9
+222	bbb	Para	f	999	Para	m4
+222	bbb	Para	f	999	Para	m5
+333	ccc	calpol	f	500	calpol	f5
+444	ddd	hcq	m	500	hcq	m5
+444	ddd	hcq	m	500	hcq	m6
+111	aaa	hcq	m	600	hcq	m5
+111	aaa	hcq	m	600	hcq	m6
+555	eee	cetzine	m	700	cetzine	m7
+333	ccc	Para	m	444	Para	m9
+333	ccc	Para	m	444	Para	f9
+333	ccc	Para	m	444	Para	m4
+333	ccc	Para	m	444	Para	m5
+111	aaa	Para	m	500	Para	m9
+111	aaa	Para	m	500	Para	f9
+111	aaa	Para	m	500	Para	m4
+111	aaa	Para	m	500	Para	m5
+111	aaa	metacin	m	800	metacin	m8
+222	bbb	Crocin	f	600	Crocin	f6
+222	bbb	Para	f	999	Para	m9
+222	bbb	Para	f	999	Para	f9
+222	bbb	Para	f	999	Para	m4
+222	bbb	Para	f	999	Para	m5
+333	ccc	calpol	f	500	calpol	f5
+444	ddd	hcq	m	500	hcq	m5
+444	ddd	hcq	m	500	hcq	m6
+111	aaa	hcq	m	600	hcq	m5
+111	aaa	hcq	m	600	hcq	m6
+555	eee	cetzine	m	700	cetzine	m7
+333	ccc	Para	m	444	Para	m9
+333	ccc	Para	m	444	Para	f9
+333	ccc	Para	m	444	Para	m4
+333	ccc	Para	m	444	Para	m5
+111	aaa	Para	m	500	Para	m9
+111	aaa	Para	m	500	Para	f9
+111	aaa	Para	m	500	Para	m4
+111	aaa	Para	m	500	Para	m5
+111	aaa	metacin	m	800	metacin	m8
+222	bbb	Crocin	f	600	Crocin	f6
+222	bbb	Para	f	999	Para	m9
+222	bbb	Para	f	999	Para	f9
+222	bbb	Para	f	999	Para	m4
+222	bbb	Para	f	999	Para	m5
+333	ccc	calpol	f	500	calpol	f5
+444	ddd	hcq	m	500	hcq	m5
+444	ddd	hcq	m	500	hcq	m6
+111	aaa	hcq	m	600	hcq	m5
+111	aaa	hcq	m	600	hcq	m6
+555	eee	cetzine	m	700	cetzine	m7
+333	ccc	Para	m	444	Para	m9
+333	ccc	Para	m	444	Para	f9
+333	ccc	Para	m	444	Para	m4
+333	ccc	Para	m	444	Para	m5
+Time taken: 21.036 seconds, Fetched: 60 row(s)
+hive> select drug.* from patient join drug on patient.drug=drug.name;
+Query ID = ak_20211108221354_6b532f41-0fc7-4ef4-8bb6-6eaecd69be5a
+Total jobs = 1
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1636366536993_0009, Tracking URL = http://ak:8088/proxy/application_1636366536993_0009/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1636366536993_0009
+Hadoop job information for Stage-3: number of mappers: 1; number of reducers: 0
+2021-11-08 22:14:08,425 Stage-3 map = 0%,  reduce = 0%
+2021-11-08 22:14:14,620 Stage-3 map = 100%,  reduce = 0%, Cumulative CPU 1.55 sec
+MapReduce Total cumulative CPU time: 1 seconds 550 msec
+Ended Job = job_1636366536993_0009
+MapReduce Jobs Launched: 
+Stage-Stage-3: Map: 1   Cumulative CPU: 1.55 sec   HDFS Read: 9510 HDFS Write: 1305 SUCCESS
+Total MapReduce CPU Time Spent: 1 seconds 550 msec
+OK
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+metacin	m8
+Crocin	f6
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+calpol	f5
+hcq	m5
+hcq	m6
+hcq	m5
+hcq	m6
+cetzine	m7
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+metacin	m8
+Crocin	f6
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+calpol	f5
+hcq	m5
+hcq	m6
+hcq	m5
+hcq	m6
+cetzine	m7
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+metacin	m8
+Crocin	f6
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+calpol	f5
+hcq	m5
+hcq	m6
+hcq	m5
+hcq	m6
+cetzine	m7
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+Time taken: 21.337 seconds, Fetched: 60 row(s)
+hive> select drug.* from patient inner join drug on patient.drug=drug.name;
+Query ID = ak_20211108221542_ef982474-4a19-43e5-82cb-e8aef0b768f1
+Total jobs = 1
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1636366536993_0010, Tracking URL = http://ak:8088/proxy/application_1636366536993_0010/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1636366536993_0010
+Hadoop job information for Stage-3: number of mappers: 1; number of reducers: 0
+2021-11-08 22:15:57,098 Stage-3 map = 0%,  reduce = 0%
+2021-11-08 22:16:03,293 Stage-3 map = 100%,  reduce = 0%, Cumulative CPU 1.74 sec
+MapReduce Total cumulative CPU time: 1 seconds 740 msec
+Ended Job = job_1636366536993_0010
+MapReduce Jobs Launched: 
+Stage-Stage-3: Map: 1   Cumulative CPU: 1.74 sec   HDFS Read: 9519 HDFS Write: 1305 SUCCESS
+Total MapReduce CPU Time Spent: 1 seconds 740 msec
+OK
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+metacin	m8
+Crocin	f6
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+calpol	f5
+hcq	m5
+hcq	m6
+hcq	m5
+hcq	m6
+cetzine	m7
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+metacin	m8
+Crocin	f6
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+calpol	f5
+hcq	m5
+hcq	m6
+hcq	m5
+hcq	m6
+cetzine	m7
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+metacin	m8
+Crocin	f6
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+calpol	f5
+hcq	m5
+hcq	m6
+hcq	m5
+hcq	m6
+cetzine	m7
+Para	m9
+Para	f9
+Para	m4
+Para	m5
+Time taken: 21.96 seconds, Fetched: 60 row(s)
+hive> 
+
