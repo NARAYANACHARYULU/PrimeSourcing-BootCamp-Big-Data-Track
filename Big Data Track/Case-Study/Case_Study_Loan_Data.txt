@@ -1,0 +1,1041 @@
+<------------------------------------------------------------------------------------------------------------------------------------------->
+<------------------------------------------------------------DATA EXPLORATION,CLEANING,VALIDATION------------------------------------------->
+<------------------------------------------------------------------------------------------------------------------------------------------->
+
+ak@ak:~$ sudo mysql --local-infile=1 -u root -p
+[sudo] password for ak: 
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 135
+Server version: 8.0.27-0ubuntu0.20.04.1 (Ubuntu)
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| gladiator          |
+| information_schema |
+| metastore          |
+| mysql              |
+| performance_schema |
+| sqoopdb            |
+| sys                |
++--------------------+
+7 rows in set (0.00 sec)
+
+mysql> use sqoopdb;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> truncate table historic_data;
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> load data local infile '/home/ak/Downloads/historic_data.csv' into table historic_data fields terminated by ',' lines terminated by '\n' (End_of_Period,Loan_Number,Region,Country_Code,Country,Borrower,Guarantor_Country_Code,Guarantor,Loan_Type,Loan_Status,Interest_Rate,Currency_of_Commitment,Project_ID,Project_Name ,Original_Principal_Amount,Cancelled_Amount,Undisbursed_Amount,Disbursed_Amount,Repaid_to_IBRD,Due_to_IBRD,Exchange_Adjustment,Borrowers_Obligation,Sold_3rd_Party,Repaid_3rd_Party,Due_3rd_Party,Loans_Held,First_Repayment_Date,Last_Repayment_Date,Agreement_Signing_Date,Board_Approval_Date,Effective_Date,Closed_Date,Last_Disbursement_Date);
+Query OK, 1078004 rows affected, 65535 warnings (31.38 sec)
+Records: 1078004  Deleted: 0  Skipped: 0  Warnings: 88463
+
+mysql> select count(*) from latest_data;
++----------+
+| count(*) |
++----------+
+|     9105 |
++----------+
+1 row in set (0.02 sec)
+
+mysql> load data local infile '/home/ak/Downloads/historic_data.csv' into table historic_data fields terminated by ',' lines terminated by '\n' (End_of_Period,Loan_Number,Region,Country_Code,Country,Borrower,Guarantor_Country_Code,Guarantor,Loan_Type,Loan_Status,Interest_Rate,Currency_of_Commitment,Project_ID,Project_Name ,Original_Principal_Amount,Cancelled_Amount,Undisbursed_Amount,Disbursed_Amount,Repaid_to_IBRD,Due_to_IBRD,Exchange_Adjustment,Borrowers_Obligation,Sold_3rd_Party,Repaid_3rd_Party,Due_3rd_Party,Loans_Held,First_Repayment_Date,Last_Repayment_Date,Agreement_Signing_Date,Board_Approval_Date,Effective_Date,Closed_Date,Last_Disbursement_Date);
+Query OK, 1078004 rows affected, 65535 warnings (31.38 sec)
+Records: 1078004  Deleted: 0  Skipped: 0  Warnings: 88463
+
+mysql> desc latest_data;
++---------------------------+-------------+------+-----+---------+-------+
+| Field                     | Type        | Null | Key | Default | Extra |
++---------------------------+-------------+------+-----+---------+-------+
+| End_of_Period             | varchar(50) | YES  |     | NULL    |       |
+| Loan_Number               | varchar(50) | YES  |     | NULL    |       |
+| Region                    | varchar(50) | YES  |     | NULL    |       |
+| Country_Code              | varchar(50) | YES  |     | NULL    |       |
+| Country                   | varchar(50) | YES  |     | NULL    |       |
+| Borrower                  | varchar(50) | YES  |     | NULL    |       |
+| Guarantor_Country_Code    | varchar(50) | YES  |     | NULL    |       |
+| Guarantor                 | varchar(50) | YES  |     | NULL    |       |
+| Loan_Type                 | varchar(50) | YES  |     | NULL    |       |
+| Loan_Status               | varchar(50) | YES  |     | NULL    |       |
+| Interest_Rate             | varchar(50) | YES  |     | NULL    |       |
+| Currency_of_Commitment    | varchar(50) | YES  |     | NULL    |       |
+| Project_ID                | varchar(50) | YES  |     | NULL    |       |
+| Project_Name              | varchar(50) | YES  |     | NULL    |       |
+| Original_Principal_Amount | varchar(50) | YES  |     | NULL    |       |
+| Cancelled_Amount          | varchar(50) | YES  |     | NULL    |       |
+| Undisbursed_Amount        | varchar(50) | YES  |     | NULL    |       |
+| Disbursed_Amount          | varchar(50) | YES  |     | NULL    |       |
+| Repaid_to_IBRD            | varchar(50) | YES  |     | NULL    |       |
+| Due_to_IBRD               | varchar(50) | YES  |     | NULL    |       |
+| Exchange_Adjustment       | varchar(50) | YES  |     | NULL    |       |
+| Borrowers_Obligation      | varchar(50) | YES  |     | NULL    |       |
+| Sold_3rd_Party            | varchar(50) | YES  |     | NULL    |       |
+| Repaid_3rd_Party          | varchar(50) | YES  |     | NULL    |       |
+| Due_3rd_Party             | varchar(50) | YES  |     | NULL    |       |
+| Loans_Held                | varchar(50) | YES  |     | NULL    |       |
+| First_Repayment_Date      | varchar(50) | YES  |     | NULL    |       |
+| Last_Repayment_Date       | varchar(50) | YES  |     | NULL    |       |
+| Agreement_Signing_Date    | varchar(50) | YES  |     | NULL    |       |
+| Board_Approval_Date       | varchar(50) | YES  |     | NULL    |       |
+| Effective_Date            | varchar(50) | YES  |     | NULL    |       |
+| Closed_Date               | varchar(50) | YES  |     | NULL    |       |
+| Last_Disbursement_Date    | varchar(50) | YES  |     | NULL    |       |
++---------------------------+-------------+------+-----+---------+-------+
+33 rows in set (0.02 sec)
+
+mysql> select count(*) from historic_data where end_of_period = '';
++----------+
+| count(*) |
++----------+
+|        0 |
++----------+
+1 row in set (0.77 sec)
+
+mysql> select count(*) from historic_data where loan_number = '';
++----------+
+| count(*) |
++----------+
+|        0 |
++----------+
+1 row in set (0.74 sec)
+
+mysql> select count(*) from historic_data where region = '';
++----------+
+| count(*) |
++----------+
+|        0 |
++----------+
+1 row in set (0.75 sec)
+
+mysql> select count(*) from historic_data where country_code = '';
++----------+
+| count(*) |
++----------+
+|        0 |
++----------+
+1 row in set (0.77 sec)
+
+mysql> select count(*) from historic_data where country = '';
++----------+
+| count(*) |
++----------+
+|        0 |
++----------+
+1 row in set (0.74 sec)
+
+mysql> select count(*) from historic_data where borrower = '';
++----------+
+| count(*) |
++----------+
+|     6914 |
++----------+
+1 row in set (0.73 sec)
+
+mysql> select count(*) from historic_data where Guarantor_Country_Code = '';
++----------+
+| count(*) |
++----------+
+|    33736 |
++----------+
+1 row in set (0.74 sec)
+
+
+mysql> select count(*) from historic_data where Guarantor = '';
++----------+
+| count(*) |
++----------+
+|    64558 |
++----------+
+1 row in set (0.72 sec)
+
+mysql> select count(*) from historic_data where Loan_Type = '';
++----------+
+| count(*) |
++----------+
+|     9732 |
++----------+
+1 row in set (0.73 sec)
+
+mysql> select count(*) from historic_data where Loan_Status = '';
++----------+
+| count(*) |
++----------+
+|      248 |
++----------+
+1 row in set (0.78 sec)
+
+mysql> select count(*) from historic_data where Interest_Rate  = '';
++----------+
+| count(*) |
++----------+
+|    27525 |
++----------+
+1 row in set (0.75 sec)
+
+mysql> select count(*) from historic_data where Currency_of_Commitment = '';
++----------+
+| count(*) |
++----------+
+|   961182 |
++----------+
+1 row in set (0.74 sec)
+
+mysql> select count(*) from historic_data where Project_ID  = '';
++----------+
+| count(*) |
++----------+
+|   105175 |
++----------+
+1 row in set (0.75 sec)
+
+mysql> select count(*) from historic_data where Project_Name  = '';
++----------+
+| count(*) |
++----------+
+|   236515 |
++----------+
+1 row in set (0.75 sec)
+
+mysql> select count(*) from historic_data where Original_Principal_Amount  = '';
++----------+
+| count(*) |
++----------+
+|    11101 |
++----------+
+1 row in set (0.74 sec)
+
+mysql> select count(*) from historic_data where Cancelled_Amount  = '';
++----------+
+| count(*) |
++----------+
+|     8087 |
++----------+
+1 row in set (0.75 sec)
+
+mysql> select count(*) from historic_data where Undisbursed_Amount  = '';
++----------+
+| count(*) |
++----------+
+|      333 |
++----------+
+1 row in set (0.74 sec)
+
+mysql> select count(*) from historic_data where Disbursed_Amount  = '';
++----------+
+| count(*) |
++----------+
+|        0 |
++----------+
+1 row in set (0.75 sec)
+
+mysql> select count(*) from historic_data where Repaid_to_IBRD   = '';
++----------+
+| count(*) |
++----------+
+|        0 |
++----------+
+1 row in set (0.76 sec)
+
+mysql> select count(*) from historic_data where Due_to_IBRD  = '';
++----------+
+| count(*) |
++----------+
+|        0 |
++----------+
+1 row in set (0.75 sec)
+
+mysql> select count(*) from historic_data wheere Exchange_Adjustment  = '';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Exchange_Adjustment  = ''' at line 1
+mysql> select count(*) from historic_data where Exchange_Adjustment  = '';
++----------+
+| count(*) |
++----------+
+|        0 |
++----------+
+1 row in set (0.74 sec)
+
+mysql> select count(*) from historic_data where Borrowers_Obligation  = '';
++----------+
+| count(*) |
++----------+
+|        0 |
++----------+
+1 row in set (0.74 sec)
+
+mysql> select count(*) from historic_data where Sold_3rd_Party = '';
++----------+
+| count(*) |
++----------+
+|        0 |
++----------+
+1 row in set (0.75 sec)
+
+mysql> select count(*) from historic_data where Repaid_3rd_Party = '';
++----------+
+| count(*) |
++----------+
+|        0 |
++----------+
+1 row in set (0.71 sec)
+
+mysql> select count(*) from historic_data where Due_3rd_Party = '';
++----------+
+| count(*) |
++----------+
+|        0 |
++----------+
+1 row in set (0.72 sec)
+
+mysql> select count(*) from historic_data where Loans_Held  = '';
++----------+
+| count(*) |
++----------+
+|        0 |
++----------+
+1 row in set (0.74 sec)
+
+mysql> select count(*) from historic_data where First_Repayment_Date = '';
++----------+
+| count(*) |
++----------+
+|     5358 |
++----------+
+1 row in set (0.73 sec)
+
+mysql> select count(*) from historic_data where Last_Repayment_Date = '';
++----------+
+| count(*) |
++----------+
+|     5343 |
++----------+
+1 row in set (0.73 sec)
+
+mysql> select count(*) from historic_data where Agreement_Signing_Date  = '';
++----------+
+| count(*) |
++----------+
+|    12583 |
++----------+
+1 row in set (0.75 sec)
+
+mysql> select count(*) from historic_data where Board_Approval_Date = '';
++----------+
+| count(*) |
++----------+
+|     1349 |
++----------+
+1 row in set (0.74 sec)
+
+mysql> select count(*) from historic_data where Effective_Date = '';
++----------+
+| count(*) |
++----------+
+|     7518 |
++----------+
+1 row in set (0.74 sec)
+
+mysql> select count(*) from historic_data where Closed_Date = '';
++----------+
+| count(*) |
++----------+
+|     1167 |
++----------+
+1 row in set (0.74 sec)
+
+mysql> select count(*) from historic_data where Last_Disbursement_Date = '';
++----------+
+| count(*) |
++----------+
+|   407846 |
++----------+
+1 row in set (0.75 sec)
+
+mysql> update historic_data set borrower = null where borrower = '';
+Query OK, 6914 rows affected (2.37 sec)
+Rows matched: 6914  Changed: 6914  Warnings: 0
+
+mysql> update historic_data set Guarantor_Country_Code = null where borrower = '';
+Query OK, 0 rows affected (1.41 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+mysql> update historic_data set Guarantor = null where borrower = '';
+Query OK, 0 rows affected (1.46 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+mysql> update historic_data set loan_type = null where borrower = '';
+Query OK, 0 rows affected (1.42 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+mysql> update historic_data set Guarantor_Country_Code = null where Guarantor_Country_Code  = '';
+Query OK, 33736 rows affected (8.21 sec)
+Rows matched: 33736  Changed: 33736  Warnings: 0
+
+mysql> update historic_data set Guarantor = null where Guarantor  = '';
+Query OK, 64558 rows affected (17.41 sec)
+Rows matched: 64558  Changed: 64558  Warnings: 0
+
+mysql> update historic_data set loan_type = null where loan_type = '';
+Query OK, 9732 rows affected (3.32 sec)
+Rows matched: 9732  Changed: 9732  Warnings: 0
+
+mysql> update historic_data set loan_status = null where loan_status = '';
+Query OK, 248 rows affected (1.61 sec)
+Rows matched: 248  Changed: 248  Warnings: 0
+
+mysql> update historic_data set interest_rate = null where interest_rate = '';
+Query OK, 27525 rows affected (8.35 sec)
+Rows matched: 27525  Changed: 27525  Warnings: 0
+
+mysql> update historic_data set Currency_of_Commitment  = null where Currency_of_Commitment  = '';
+Query OK, 961182 rows affected (43.80 sec)
+Rows matched: 961182  Changed: 961182  Warnings: 0
+
+mysql> update historic_data set Project_ID   = null where Project_ID    = '';
+Query OK, 105175 rows affected (12.84 sec)
+Rows matched: 105175  Changed: 105175  Warnings: 0
+
+mysql> update historic_data set Original_Principal_Amount = null where Original_Principal_Amount  = '';
+Query OK, 11101 rows affected (2.88 sec)
+Rows matched: 11101  Changed: 11101  Warnings: 0
+
+mysql> update historic_data set Cancelled_Amount  = null where Cancelled_Amount   = '';
+Query OK, 8087 rows affected (2.77 sec)
+Rows matched: 8087  Changed: 8087  Warnings: 0
+
+mysql> update historic_data set Undisbursed_Amount  = null where Undisbursed_Amount  = '';
+Query OK, 333 rows affected (1.52 sec)
+Rows matched: 333  Changed: 333  Warnings: 0
+
+mysql> update historic_data set First_Repayment_Date  = null where First_Repayment_Date  = '';
+Query OK, 5358 rows affected (2.34 sec)
+Rows matched: 5358  Changed: 5358  Warnings: 0
+
+mysql> update historic_data set Last_Repayment_Date = null where Last_Repayment_Date  = '';
+Query OK, 5343 rows affected (2.31 sec)
+Rows matched: 5343  Changed: 5343  Warnings: 0
+
+mysql> update historic_data set Agreement_Signing_Date  = null where Agreement_Signing_Date   = '';
+Query OK, 12583 rows affected (3.27 sec)
+Rows matched: 12583  Changed: 12583  Warnings: 0
+
+mysql> update historic_data set Board_Approval_Date  = null where Board_Approval_Date   = '';
+Query OK, 1349 rows affected (1.71 sec)
+Rows matched: 1349  Changed: 1349  Warnings: 0
+
+mysql> update historic_data set Effective_Date  = null where Effective_Date  = '';
+Query OK, 7518 rows affected (2.59 sec)
+Rows matched: 7518  Changed: 7518  Warnings: 0
+
+mysql> update historic_data set  Closed_Date  = null where  Closed_Date  = '';
+Query OK, 1167 rows affected (1.59 sec)
+Rows matched: 1167  Changed: 1167  Warnings: 0
+
+mysql> update historic_data set  Last_Disbursement_Date  = null where  Last_Disbursement_Date  = '';
+Query OK, 407846 rows affected (23.03 sec)
+Rows matched: 407846  Changed: 407846  Warnings: 0
+
+mysql> commit;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select count(*)-count(borrower) from historic_data;
++--------------------------+
+| count(*)-count(borrower) |
++--------------------------+
+|                     6914 |
++--------------------------+
+1 row in set (1.02 sec)
+
+mysql> select count(*) from historic_data;
++----------+
+| count(*) |
++----------+
+|  1078004 |
++----------+
+1 row in set (0.45 sec)
+
+mysql> select count(*) from latest_data;
++----------+
+| count(*) |
++----------+
+|     9105 |
++----------+
+1 row in set (0.11 sec)
+
+mysql> desc historic_data;
++---------------------------+-------------+------+-----+---------+-------+
+| Field                     | Type        | Null | Key | Default | Extra |
++---------------------------+-------------+------+-----+---------+-------+
+| End_of_Period             | varchar(50) | YES  |     | NULL    |       |
+| Loan_Number               | varchar(50) | YES  |     | NULL    |       |
+| Region                    | varchar(50) | YES  |     | NULL    |       |
+| Country_Code              | varchar(50) | YES  |     | NULL    |       |
+| Country                   | varchar(50) | YES  |     | NULL    |       |
+| Borrower                  | varchar(50) | YES  |     | NULL    |       |
+| Guarantor_Country_Code    | varchar(50) | YES  |     | NULL    |       |
+| Guarantor                 | varchar(50) | YES  |     | NULL    |       |
+| Loan_Type                 | varchar(50) | YES  |     | NULL    |       |
+| Loan_Status               | varchar(50) | YES  |     | NULL    |       |
+| Interest_Rate             | varchar(50) | YES  |     | NULL    |       |
+| Currency_of_Commitment    | varchar(50) | YES  |     | NULL    |       |
+| Project_ID                | varchar(50) | YES  |     | NULL    |       |
+| Project_Name              | varchar(50) | YES  |     | NULL    |       |
+| Original_Principal_Amount | varchar(50) | YES  |     | NULL    |       |
+| Cancelled_Amount          | varchar(50) | YES  |     | NULL    |       |
+| Undisbursed_Amount        | varchar(50) | YES  |     | NULL    |       |
+| Disbursed_Amount          | varchar(50) | YES  |     | NULL    |       |
+| Repaid_to_IBRD            | varchar(50) | YES  |     | NULL    |       |
+| Due_to_IBRD               | varchar(50) | YES  |     | NULL    |       |
+| Exchange_Adjustment       | varchar(50) | YES  |     | NULL    |       |
+| Borrowers_Obligation      | varchar(50) | YES  |     | NULL    |       |
+| Sold_3rd_Party            | varchar(50) | YES  |     | NULL    |       |
+| Repaid_3rd_Party          | varchar(50) | YES  |     | NULL    |       |
+| Due_3rd_Party             | varchar(50) | YES  |     | NULL    |       |
+| Loans_Held                | varchar(50) | YES  |     | NULL    |       |
+| First_Repayment_Date      | varchar(50) | YES  |     | NULL    |       |
+| Last_Repayment_Date       | varchar(50) | YES  |     | NULL    |       |
+| Agreement_Signing_Date    | varchar(50) | YES  |     | NULL    |       |
+| Board_Approval_Date       | varchar(50) | YES  |     | NULL    |       |
+| Effective_Date            | varchar(50) | YES  |     | NULL    |       |
+| Closed_Date               | varchar(50) | YES  |     | NULL    |       |
+| Last_Disbursement_Date    | varchar(50) | YES  |     | NULL    |       |
++---------------------------+-------------+------+-----+---------+-------+
+33 rows in set (0.00 sec)
+
+mysql> desc latest_data;
++---------------------------+-------------+------+-----+---------+-------+
+| Field                     | Type        | Null | Key | Default | Extra |
++---------------------------+-------------+------+-----+---------+-------+
+| End_of_Period             | varchar(50) | YES  |     | NULL    |       |
+| Loan_Number               | varchar(50) | YES  |     | NULL    |       |
+| Region                    | varchar(50) | YES  |     | NULL    |       |
+| Country_Code              | varchar(50) | YES  |     | NULL    |       |
+| Country                   | varchar(50) | YES  |     | NULL    |       |
+| Borrower                  | varchar(50) | YES  |     | NULL    |       |
+| Guarantor_Country_Code    | varchar(50) | YES  |     | NULL    |       |
+| Guarantor                 | varchar(50) | YES  |     | NULL    |       |
+| Loan_Type                 | varchar(50) | YES  |     | NULL    |       |
+| Loan_Status               | varchar(50) | YES  |     | NULL    |       |
+| Interest_Rate             | varchar(50) | YES  |     | NULL    |       |
+| Currency_of_Commitment    | varchar(50) | YES  |     | NULL    |       |
+| Project_ID                | varchar(50) | YES  |     | NULL    |       |
+| Project_Name              | varchar(50) | YES  |     | NULL    |       |
+| Original_Principal_Amount | varchar(50) | YES  |     | NULL    |       |
+| Cancelled_Amount          | varchar(50) | YES  |     | NULL    |       |
+| Undisbursed_Amount        | varchar(50) | YES  |     | NULL    |       |
+| Disbursed_Amount          | varchar(50) | YES  |     | NULL    |       |
+| Repaid_to_IBRD            | varchar(50) | YES  |     | NULL    |       |
+| Due_to_IBRD               | varchar(50) | YES  |     | NULL    |       |
+| Exchange_Adjustment       | varchar(50) | YES  |     | NULL    |       |
+| Borrowers_Obligation      | varchar(50) | YES  |     | NULL    |       |
+| Sold_3rd_Party            | varchar(50) | YES  |     | NULL    |       |
+| Repaid_3rd_Party          | varchar(50) | YES  |     | NULL    |       |
+| Due_3rd_Party             | varchar(50) | YES  |     | NULL    |       |
+| Loans_Held                | varchar(50) | YES  |     | NULL    |       |
+| First_Repayment_Date      | varchar(50) | YES  |     | NULL    |       |
+| Last_Repayment_Date       | varchar(50) | YES  |     | NULL    |       |
+| Agreement_Signing_Date    | varchar(50) | YES  |     | NULL    |       |
+| Board_Approval_Date       | varchar(50) | YES  |     | NULL    |       |
+| Effective_Date            | varchar(50) | YES  |     | NULL    |       |
+| Closed_Date               | varchar(50) | YES  |     | NULL    |       |
+| Last_Disbursement_Date    | varchar(50) | YES  |     | NULL    |       |
++---------------------------+-------------+------+-----+---------+-------+
+33 rows in set (0.00 sec)
+
+<------------------------------------------------------------------------------------------------------------------------------------------->
+<-----------------------------------------------------TOP 10 loan_types--------------------------------------------------------------------->
+<------------------------------------------------------------------------------------------------------------------------------------------->
+
+mysql> select distinct(loan_type) from historic_data;
++--------------------------------+
+| loan_type                      |
++--------------------------------+
+| NPL                            |
+| NULL                           |
+| NON POOL                       |
+| Belgium                        |
+| "Iran                          |
+| Mexico                         |
+| "Egypt                         |
+| "Congo                         |
+| United Kingdom                 |
+| Sri Lanka                      |
+| "Venezuela                     |
+| Colombia                       |
+| TW                             |
+| "Taiwan                        |
+| Uganda                         |
+| IFCT                           |
+| "Korea                         |
+| Dominican Republic             |
+| Croatia                        |
+| Slovenia                       |
+| CPL                            |
+| Romania                        |
+| SCPD                           |
+| Serbia                         |
+| Brazil                         |
+| Uruguay                        |
+| SCPM                           |
+| IFCM                           |
+| POOL LOAN                      |
+| SCPY                           |
+| Cameroon                       |
+| SC                             |
+| Chile                          |
+| SCL                            |
+| St. Lucia                      |
+| St. Kitts and Nevis            |
+| Bulgaria                       |
+| Slovak Republic                |
+| Czech Republic                 |
+| Poland                         |
+| Gabon                          |
+| North Macedonia                |
+| FSL                            |
+| Thailand                       |
+| BLNR                           |
+| GURB                           |
+| BLNC                           |
+| GUBF                           |
+| Myanmar                        |
+| South Africa                   |
+| Honduras                       |
+| GA                             |
+| BLOAN                          |
+| IFC LOAN                       |
+| "Macedonia                     |
+| SCP USD                        |
+| Guarantee                      |
+| CG                             |
+| SCP EUR                        |
+| SCP JPY                        |
+| SNGL CRNCY                     |
+| St. Vincent and the Grenadines |
+| INVESTMENT RECOVERY            |
+| BR                             |
+| Chad                           |
+| MK                             |
+| GEEDR                          |
+| GSURR                          |
+| Nigeria                        |
+| Tunisia                        |
+| "Bahamas                       |
++--------------------------------+
+71 rows in set (1.11 sec)
+<------------------------------------------------------------------------------------------------------------------------------------------->
+<-----------------------------------------------------Percentage of loan issued to APAC region in current year------------------------------>
+<------------------------------------------------------------------------------------------------------------------------------------------->
+mysql> select count(*) from historic_data where region = 'EAST ASIA AND PACIFIC';
++----------+
+| count(*) |
++----------+
+|   231910 |
++----------+
+1 row in set (0.96 sec)
+
+mysql> select (231910/count(*))*100 from historic_data;
++-----------------------+
+| (231910/count(*))*100 |
++-----------------------+
+|               21.5129 |
++-----------------------+
+1 row in set (0.76 sec)
+
+mysql> select project_name,count(project_name) as occurence from historic_data where region='EAST ASIA AND PACIFIC' group by project_name order by occurence desc limit 1;
++--------------+-----------+
+| project_name | occurence |
++--------------+-----------+
+|              |     50183 |
++--------------+-----------+
+1 row in set (1.22 sec)
+
+mysql> select project_name,count(project_name) as occurence from historic_data where region='EAST ASIA AND PACIFIC' group by project_name order by occurence desc limit 2;
++--------------+-----------+
+| project_name | occurence |
++--------------+-----------+
+|              |     50183 |
+| EDUCATION IV |       763 |
++--------------+-----------+
+2 rows in set (1.17 sec)
+
+mysql> desc historic_data;
++---------------------------+-------------+------+-----+---------+-------+
+| Field                     | Type        | Null | Key | Default | Extra |
++---------------------------+-------------+------+-----+---------+-------+
+| End_of_Period             | varchar(50) | YES  |     | NULL    |       |
+| Loan_Number               | varchar(50) | YES  |     | NULL    |       |
+| Region                    | varchar(50) | YES  |     | NULL    |       |
+| Country_Code              | varchar(50) | YES  |     | NULL    |       |
+| Country                   | varchar(50) | YES  |     | NULL    |       |
+| Borrower                  | varchar(50) | YES  |     | NULL    |       |
+| Guarantor_Country_Code    | varchar(50) | YES  |     | NULL    |       |
+| Guarantor                 | varchar(50) | YES  |     | NULL    |       |
+| Loan_Type                 | varchar(50) | YES  |     | NULL    |       |
+| Loan_Status               | varchar(50) | YES  |     | NULL    |       |
+| Interest_Rate             | varchar(50) | YES  |     | NULL    |       |
+| Currency_of_Commitment    | varchar(50) | YES  |     | NULL    |       |
+| Project_ID                | varchar(50) | YES  |     | NULL    |       |
+| Project_Name              | varchar(50) | YES  |     | NULL    |       |
+| Original_Principal_Amount | varchar(50) | YES  |     | NULL    |       |
+| Cancelled_Amount          | varchar(50) | YES  |     | NULL    |       |
+| Undisbursed_Amount        | varchar(50) | YES  |     | NULL    |       |
+| Disbursed_Amount          | varchar(50) | YES  |     | NULL    |       |
+| Repaid_to_IBRD            | varchar(50) | YES  |     | NULL    |       |
+| Due_to_IBRD               | varchar(50) | YES  |     | NULL    |       |
+| Exchange_Adjustment       | varchar(50) | YES  |     | NULL    |       |
+| Borrowers_Obligation      | varchar(50) | YES  |     | NULL    |       |
+| Sold_3rd_Party            | varchar(50) | YES  |     | NULL    |       |
+| Repaid_3rd_Party          | varchar(50) | YES  |     | NULL    |       |
+| Due_3rd_Party             | varchar(50) | YES  |     | NULL    |       |
+| Loans_Held                | varchar(50) | YES  |     | NULL    |       |
+| First_Repayment_Date      | varchar(50) | YES  |     | NULL    |       |
+| Last_Repayment_Date       | varchar(50) | YES  |     | NULL    |       |
+| Agreement_Signing_Date    | varchar(50) | YES  |     | NULL    |       |
+| Board_Approval_Date       | varchar(50) | YES  |     | NULL    |       |
+| Effective_Date            | varchar(50) | YES  |     | NULL    |       |
+| Closed_Date               | varchar(50) | YES  |     | NULL    |       |
+| Last_Disbursement_Date    | varchar(50) | YES  |     | NULL    |       |
++---------------------------+-------------+------+-----+---------+-------+
+33 rows in set (0.00 sec)
+<------------------------------------------------------------------------------------------------------------------------------------------->
+<-----------------------------------------------------Which project type utilised more loans------------------------------>
+<------------------------------------------------------------------------------------------------------------------------------------------->
+mysql> select loans_held from historic_data limit 5;
++------------+
+| loans_held |
++------------+
+| 0          |
+| 0          |
+| 0          |
+| 0          |
+| 0          |
++------------+
+5 rows in set (0.00 sec)
+
+mysql> select sum(loans_held) from historic_data;
+
++-------------------+
+| sum(loans_held)   |
++-------------------+
+| 28374501239138.43 |
++-------------------+
+1 row in set, 48 warnings (0.89 sec)
+
+mysql> 
+mysql> select region,sum(loans_held) as total_loan  from historic_data where region = 'EAST ASIA AND PACIFIC' group by region order
+by total_loan desc;
++-----------------------+-------------------+
+| region                | total_loan        |
++-----------------------+-------------------+
+| EAST ASIA AND PACIFIC | 6095718645957.204 |
++-----------------------+-------------------+
+1 row in set (0.99 sec)
+
+mysql> select project_name,sum(loans_held) as total_loan  from historic_data where region = 'EAST ASIA AND PACIFIC' group by project_name order by total_loan desc limit 2;
++---------------------+--------------------+
+| project_name        | total_loan         |
++---------------------+--------------------+
+|                     | 1029649983196.7098 |
+| ID-BOS KITA Project | 115282560000.84995 |
++---------------------+--------------------+
+2 rows in set (1.23 sec)
+
+mysql> 
+
+<--------------------------------------------------------------------------------------------------------------------------------------------------->
+<------------------------------------------------------------SPARK with scala--------------------------------------------------------------------->
+<--------------------------------------------------------------------------------------------------------------------------------------------------->
+ak@ak:~$ start-all.sh
+This script is Deprecated. Instead use start-dfs.sh and start-yarn.sh
+Starting namenodes on [localhost]
+localhost: starting namenode, logging to /home/ak/hadoop-2.10.1/logs/hadoop-ak-namenode-ak.out
+localhost: starting datanode, logging to /home/ak/hadoop-2.10.1/logs/hadoop-ak-datanode-ak.out
+Starting secondary namenodes [0.0.0.0]
+0.0.0.0: starting secondarynamenode, logging to /home/ak/hadoop-2.10.1/logs/hadoop-ak-secondarynamenode-ak.out
+starting yarn daemons
+starting resourcemanager, logging to /home/ak/hadoop-2.10.1/logs/yarn-ak-resourcemanager-ak.out
+localhost: starting nodemanager, logging to /home/ak/hadoop-2.10.1/logs/yarn-ak-nodemanager-ak.out
+ak@ak:~$ start-spark.sh
+starting org.apache.spark.deploy.master.Master, logging to /home/ak/spark-3.2.0-bin-hadoop2.7/logs/spark-ak-org.apache.spark.deploy.master.Master-1-ak.out
+localhost: starting org.apache.spark.deploy.worker.Worker, logging to /home/ak/spark-3.2.0-bin-hadoop2.7/logs/spark-ak-org.apache.spark.deploy.worker.Worker-1-ak.out
+ak@ak:~$ spark
+spark: command not found
+ak@ak:~$ spark-shell
+21/11/14 15:08:54 WARN Utils: Your hostname, ak resolves to a loopback address: 127.0.1.1; using 10.0.2.15 instead (on interface enp0s3)
+21/11/14 15:08:54 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+21/11/14 15:08:58 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Spark context Web UI available at http://10.0.2.15:4040
+Spark context available as 'sc' (master = local[*], app id = local-1636537139308).
+Spark session available as 'spark'.
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /___/ .__/\_,_/_/ /_/\_\   version 3.2.0
+      /_/
+         
+Using Scala version 2.12.15 (OpenJDK 64-Bit Server VM, Java 1.8.0_292)
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala> val sales=spark.read.option("header","true").csv("file:///home/ak/datasets/superstore.csv")
+sales: org.apache.spark.sql.DataFrame = [ID: string, OrderID: string ... 22 more fields]
+
+scala> sales.write.partitionBy("region","country").bucketBy(5, "city").saveAsTable("ofsa.salesbuck")
+21/11/14 15:31:49 WARN HiveConf: HiveConf of name hive.stats.jdbc.timeout does not exist
+21/11/14 15:31:49 WARN HiveConf: HiveConf of name hive.stats.retries.wait does not exist
+Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
+21/11/14 15:31:55 WARN DFSClient: Caught exception                  (0 + 2) / 2]
+java.lang.InterruptedException
+	at java.lang.Object.wait(Native Method)
+	at java.lang.Thread.join(Thread.java:1252)
+	at java.lang.Thread.join(Thread.java:1326)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.closeResponder(DFSOutputStream.java:716)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.endBlock(DFSOutputStream.java:476)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:652)
+21/11/14 15:31:57 WARN DFSClient: Caught exception 
+java.lang.InterruptedException
+	at java.lang.Object.wait(Native Method)
+	at java.lang.Thread.join(Thread.java:1252)
+	at java.lang.Thread.join(Thread.java:1326)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.closeResponder(DFSOutputStream.java:716)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.endBlock(DFSOutputStream.java:476)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:652)
+21/11/14 15:31:57 WARN DFSClient: Caught exception 
+java.lang.InterruptedException
+	at java.lang.Object.wait(Native Method)
+	at java.lang.Thread.join(Thread.java:1252)
+	at java.lang.Thread.join(Thread.java:1326)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.closeResponder(DFSOutputStream.java:716)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.endBlock(DFSOutputStream.java:476)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:652)
+21/11/14 15:31:59 WARN DFSClient: Caught exception 
+java.lang.InterruptedException
+	at java.lang.Object.wait(Native Method)
+	at java.lang.Thread.join(Thread.java:1252)
+	at java.lang.Thread.join(Thread.java:1326)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.closeResponder(DFSOutputStream.java:716)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.closeInternal(DFSOutputStream.java:684)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:680)
+21/11/14 15:31:59 WARN DFSClient: Caught exception 
+java.lang.InterruptedException
+	at java.lang.Object.wait(Native Method)
+	at java.lang.Thread.join(Thread.java:1252)
+	at java.lang.Thread.join(Thread.java:1326)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.closeResponder(DFSOutputStream.java:716)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.endBlock(DFSOutputStream.java:476)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:652)
+21/11/14 15:31:59 WARN DFSClient: Caught exception 
+java.lang.InterruptedException
+	at java.lang.Object.wait(Native Method)
+	at java.lang.Thread.join(Thread.java:1252)
+	at java.lang.Thread.join(Thread.java:1326)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.closeResponder(DFSOutputStream.java:716)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.endBlock(DFSOutputStream.java:476)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:652)
+21/11/14 15:31:59 WARN DFSClient: Caught exception 
+java.lang.InterruptedException
+	at java.lang.Object.wait(Native Method)
+	at java.lang.Thread.join(Thread.java:1252)
+	at java.lang.Thread.join(Thread.java:1326)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.closeResponder(DFSOutputStream.java:716)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.endBlock(DFSOutputStream.java:476)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:652)
+21/11/14 15:32:13 WARN DFSClient: Caught exception 
+java.lang.InterruptedException
+	at java.lang.Object.wait(Native Method)
+	at java.lang.Thread.join(Thread.java:1252)
+	at java.lang.Thread.join(Thread.java:1326)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.closeResponder(DFSOutputStream.java:716)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.endBlock(DFSOutputStream.java:476)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:652)
+21/11/14 15:32:17 WARN DFSClient: Caught exception 
+java.lang.InterruptedException
+	at java.lang.Object.wait(Native Method)
+	at java.lang.Thread.join(Thread.java:1252)
+	at java.lang.Thread.join(Thread.java:1326)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.closeResponder(DFSOutputStream.java:716)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.endBlock(DFSOutputStream.java:476)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:652)
+21/11/14 15:32:22 WARN DFSClient: Caught exception 
+java.lang.InterruptedException
+	at java.lang.Object.wait(Native Method)
+	at java.lang.Thread.join(Thread.java:1252)
+	at java.lang.Thread.join(Thread.java:1326)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.closeResponder(DFSOutputStream.java:716)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.endBlock(DFSOutputStream.java:476)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:652)
+21/11/14 15:32:27 WARN SessionState: METASTORE_FILTER_HOOK will be ignored, since hive.security.authorization.manager is set to instance of HiveAuthorizerFactory.
+21/11/14 15:32:27 WARN HiveConf: HiveConf of name hive.internal.ss.authz.settings.applied.marker does not exist
+21/11/14 15:32:27 WARN HiveConf: HiveConf of name hive.stats.jdbc.timeout does not exist
+21/11/14 15:32:27 WARN HiveConf: HiveConf of name hive.stats.retries.wait does not exist
+21/11/14 15:32:30 WARN ObjectStore: Failed to get database global_temp, returning NoSuchObjectException
+
+
+scala> sales.write.saveAsTable("ofsa.sales1")
+                                                                                
+
+ak@ak:~$ nc -lk 9999
+hello world
+what is going on over here on the portico
+Structured Streaming is a scalable and fault-tolerant stream processing engine built on the Spark SQL engine. You can express your streaming computation the same way you would express a batch computation on static data. The Spark SQL engine will take care of running it incrementally and continuously and updating the final result as streaming data continues to arrive. You can use the Dataset/DataFrame API in Scala, Java, Python or R to express streaming aggregations, event-time windows, stream-to-batch joins, etc. The computation is executed on the same optimized Spark SQL engine.
+hello hello
+API API API
+
+
+scala> val lines = spark.readStream.format("socket").option("host", "localhost").option("port", 9999).load()
+21/11/14 17:22:22 WARN TextSocketSourceProvider: The socket source should not be used for production applications! It does not support recovery.
+lines: org.apache.spark.sql.DataFrame = [value: string]
+
+scala> val words = lines.as[String].flatMap(_.split(" "))
+words: org.apache.spark.sql.Dataset[String] = [value: string]
+
+scala> val wordCounts = words.groupBy("value").count()
+wordCounts: org.apache.spark.sql.DataFrame = [value: string, count: bigint]
+
+scala> val query = wordCounts.writeStream.outputMode("complete").format("console").start()
+21/11/14 17:25:54 WARN ResolveWriteToStream: Temporary checkpoint location created which is deleted normally when the query didn't fail: /tmp/temporary-033801c3-6d34-42f2-8680-b93968d25d10. If it's required to delete it under any circumstances, please set spark.sql.streaming.forceDeleteTempCheckpointLocation to true. Important to know deleting temp checkpoint folder is best effort.
+21/11/14 17:25:54 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+query: org.apache.spark.sql.streaming.StreamingQuery = org.apache.spark.sql.execution.streaming.StreamingQueryWrapper@616092b2
+
+-------------------------------------------                                     
+Batch: 0
+-------------------------------------------
++-----+-----+
+|value|count|
++-----+-----+
++-----+-----+
+
+-------------------------------------------                                     
+Batch: 1
+-------------------------------------------
++-----+-----+
+|value|count|
++-----+-----+
+|hello|    1|
+|world|    1|
++-----+-----+
+
+-------------------------------------------                                     
+Batch: 2
+-------------------------------------------
++-------+-----+
+|  value|count|
++-------+-----+
+|portico|    1|
+|  hello|    1|
+|     is|    1|
+|     on|    2|
+|  going|    1|
+|    the|    1|
+|   what|    1|
+|   here|    1|
+|  world|    1|
+|   over|    1|
++-------+-----+
+
+-------------------------------------------                                     
+Batch: 3
+-------------------------------------------
++-----------------+-----+
+|            value|count|
++-----------------+-----+
+|              API|    1|
+|           stream|    1|
+|             will|    1|
+|              you|    1|
+|              can|    2|
+|          portico|    1|
+|            data.|    1|
+|    aggregations,|    1|
+|               in|    1|
+|          arrive.|    1|
+|            hello|    1|
+|             take|    1|
+|             same|    2|
+|   fault-tolerant|    1|
+|        continues|    1|
+|             your|    1|
+|        streaming|    3|
+|        optimized|    1|
+|           result|    1|
+|Dataset/DataFrame|    1|
++-----------------+-----+
+only showing top 20 rows
+
+-------------------------------------------                                     
+Batch: 4
+-------------------------------------------
++-----------------+-----+
+|            value|count|
++-----------------+-----+
+|              API|    1|
+|           stream|    1|
+|             will|    1|
+|              you|    1|
+|              can|    2|
+|          portico|    1|
+|            data.|    1|
+|    aggregations,|    1|
+|               in|    1|
+|          arrive.|    1|
+|            hello|    3|
+|             take|    1|
+|             same|    2|
+|   fault-tolerant|    1|
+|        continues|    1|
+|             your|    1|
+|        streaming|    3|
+|        optimized|    1|
+|           result|    1|
+|Dataset/DataFrame|    1|
++-----------------+-----+
+only showing top 20 rows
+
+-------------------------------------------                                     
+Batch: 5
+-------------------------------------------
++-----------------+-----+
+|            value|count|
++-----------------+-----+
+|              API|    4|
+|           stream|    1|
+|             will|    1|
+|              you|    1|
+|              can|    2|
+|          portico|    1|
+|            data.|    1|
+|    aggregations,|    1|
+|               in|    1|
+|          arrive.|    1|
+|            hello|    3|
+|             take|    1|
+|             same|    2|
+|   fault-tolerant|    1|
+|        continues|    1|
+|             your|    1|
+|        streaming|    3|
+|        optimized|    1|
+|           result|    1|
+|Dataset/DataFrame|    1|
++-----------------+-----+
+only showing top 20 rows
+
+
+ 
+
